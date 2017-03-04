@@ -1,0 +1,2 @@
+export LD_LIBRARY_PATH=/remote/am04home1/levons/levi/downloads/SDL2-2.0.5/lib:/remote/am04home1/levons/levi/downloads/SDL2_image-2.0.1/lib:$LD_LIBRARY_PATH
+./ztest
