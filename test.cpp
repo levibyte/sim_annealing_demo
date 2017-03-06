@@ -27,7 +27,7 @@ int main( int argc, char* args[] )
                 while( SDL_PollEvent( &e ) != 0 )
                 {
                         if ( e.type == SDL_QUIT ) quit = true;
-                        if ( e.type == SDL_MOUSEBUTTONDOWN ) j->add_change();
+                        if ( e.type == SDL_MOUSEBUTTONDOWN ) j->update();
 			if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
                             if(!j) delete j; 
                             j = new JManager;

@@ -11,7 +11,7 @@ and may not be redistributed without written permission.*/
 #include <string>
 #include <cmath>
 
-#include <SDL_ttf.h>
+//#include <SDL_ttf.h>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -41,11 +41,11 @@ bool init(const std::string& title)
         bool success = true;
 	
 	 	
-      if(!TTF_WasInit() && TTF_Init()==-1) {
+     /* if(!TTF_WasInit() && TTF_Init()==-1) {
 	  printf("TTF_Init: %s\n", TTF_GetError());
 	  exit(1);
       }
-
+*/
         //Initialize SDL
         if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
         {
