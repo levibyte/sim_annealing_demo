@@ -18,6 +18,7 @@ int main( int argc, char* args[] )
         SDL_Event e;
         JManager* j = new JManager;
 
+        unsigned int lastTime = 0, currentTime;
         //j->init_data();
        
         //SDL_RenderSetScale(gRenderer,6.0,6.0);
@@ -36,10 +37,14 @@ int main( int argc, char* args[] )
                         }
                 } 
  
-                SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-                SDL_RenderClear( gRenderer );
-                j->do_and_draw();
-                SDL_RenderPresent( gRenderer );
+                //currentTime = SDL_GetTicks();
+                //if (currentTime > lastTime + 100) {
+                //  lastTime = currentTime;
+                    j->do_and_draw();
+                //}
+                
+                
+                
         }
 
         close();

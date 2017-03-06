@@ -80,7 +80,7 @@ class JManager {
   
   public:  
     
-	JManager():m_layers_cnt(4),m_max_per_clm(5),m_conn_density(1),m_last_fitness(0) {
+	JManager():m_layers_cnt(13),m_max_per_clm(10),m_conn_density(5),m_last_fitness(0) {
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
 	  init_data();
@@ -109,6 +109,11 @@ class JManager {
 	}
 
         void draw() {
+          
+          
+         SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+         SDL_RenderClear( gRenderer );
+           
 	  for(unsigned i=0; i<m_layers_cnt; i++)
 	    for (unsigned int j=0; j<m_layers[i].size(); j++ ) {
 	      draw_circle(m_layers[i][j]->get_center(),5,m_layers[i][j]->get_color());  
@@ -119,31 +124,34 @@ class JManager {
 	    for(i=m_connections.begin();i!=m_connections.end();++i)
 	      SDL_RenderDrawLine(gRenderer,(*i).first->get_center().x,(*i).first->get_center().y,
 					   (*i).second->get_center().x,(*i).second->get_center().y);
-	    
+	    SDL_RenderPresent( gRenderer );
+             
 	}
 
         void update() {
           place();
-          //calc_intersections();
+          calc_intersections();
           //draw();
           
         }
         
         void place() {
-            int i = 0; 
-            while ( i < 100000 ) { 
+          add_change();
+          
+          /*            int i = 0; 
+            //while ( i < 100000 ) { 
               add_change();
               int c = calc_intersections(); 
               if ( c < m_last_fitness ) {
                 m_last_fitness = c; 
-                break;
+               // break;
               }
               else 
                 undo_permute();
               i++;  
-            }
+            //}
               //draw();
-             std::cout << "LAST:" <<  m_last_fitness << std::endl;
+             std::cout << "LAST:" <<  m_last_fitness << std::endl;*/
         }
         
         int calc_intersections() {
@@ -151,7 +159,7 @@ class JManager {
           int r = 0;
           for(unsigned int i=0; i<m_layers_cnt-1; i++ ) r = r + calc_intersection(i);
           
-          //std::cout << "FI: " << r << std::endl;
+          std::cout << "FI: " << r << std::endl;
           return r;
         }
         
@@ -244,10 +252,10 @@ class JManager {
         }
         
         void do_and_draw() {
-            //place();
+            place();
             //propogate();
             //calc_intersections();
-            draw();
+            //draw();
         }
         
         void add_change() {
@@ -262,11 +270,18 @@ class JManager {
 	      int s = rand()%m_layers[ln].size();
 	      if ( f == s ) return;
 	      
+	      
+	      
 	      if ( m_permuted.size() > 0 ) m_permuted.erase(m_permuted.begin(),m_permuted.begin()+m_permuted.size());
 	      
-	      std::pair<JInstance*,JInstance*> k(m_layers[ln][f],m_layers[ln][s]);
+              std::pair<JInstance*,JInstance*> k;
+              if ( m_layers[ln][f]->get_center().y > m_layers[ln][s]->get_center().y )
+                k = std::make_pair<JInstance*,JInstance*>(m_layers[ln][f],m_layers[ln][s]);
+              else
+                k = std::make_pair<JInstance*,JInstance*>(m_layers[ln][s],m_layers[ln][f]);
+                
               m_permuted.push_back(k);
-	      permute_two_instances(m_layers[ln][f],m_layers[ln][s]);
+	      permute_two_instances(k.first,k.second);
               
 	      
 	      //f=1;
@@ -280,17 +295,38 @@ class JManager {
 	}
 	
 	void permute_two_instances(JInstance* f, JInstance* s) {
-              SDL_Point tmp = s->get_center();
+               SDL_Point ns = s->get_center();
+               SDL_Point nf = f->get_center();
+               SDL_Point tmp = s->get_center();
+               
+              /*
+               for(float i=s->get_center().y; i < f->get_center().y; i=i+10.0 ) {
+                 ns.y = i;
+                 s->set_center(ns);
+                 draw();
+              }
+              
+             for(float i=f->get_center().y; i > tmp.y; i=i-10.0 ) {
+                 nf.y = i;
+                 f->set_center(nf);
+                 draw();
+              }
+              */
+              
+              //SDL_Point tmp = s->get_center();
               s->set_center(f->get_center());
               f->set_center(tmp);
-              
+              draw();
+                            
               JInstance* tmp1 = s;
               s = f;
               f = tmp1;
+              
+               draw();
         }
         
         void undo_permute() {
-          std::vector<std::pair<JInstance*,JInstance*>>::iterator i;
+          std::vector<std::pair<JInstance*,JInstance*> >::iterator i;
           for (i=m_permuted.begin();i!=m_permuted.end();i++) permute_two_instances((*i).second,(*i).first);
           
         }
