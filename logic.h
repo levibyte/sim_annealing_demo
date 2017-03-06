@@ -72,7 +72,8 @@ class JInstance {
 	std::string m_name;
 	
 	SDL_Color m_color;  
-
+        
+        //std::count_if(seen_pcer.begin(), seen_pcer.end(), [,](int x, int y) { (x>0 && JManager::mypred() > 0)});
   
 };
 
@@ -80,13 +81,13 @@ class JManager {
   
   public:  
     
-	JManager():m_layers_cnt(13),m_max_per_clm(10),m_conn_density(5),m_last_fitness(0) {
+	JManager():m_layers_cnt(2),m_max_per_clm(3),m_conn_density(1),m_last_fitness(0) {
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
 	  init_data();
           
           m_last_fitness = calc_intersections();
-           std::cout << "BEGIN:" <<  m_last_fitness << std::endl;
+           //std::cout << "BEGIN:" <<  m_last_fitness << std::endl;
 	}
 
 	void draw_circle(const SDL_Point& center, int radius, SDL_Color c)//, SDL_Color color)
@@ -160,6 +161,8 @@ class JManager {
           for(unsigned int i=0; i<m_layers_cnt-1; i++ ) r = r + calc_intersection(i);
           
           std::cout << "FI: " << r << std::endl;
+          std::cout << "************************\n\n" << std::endl;
+          
           return r;
         }
         
@@ -167,17 +170,17 @@ class JManager {
            std::multiset<int> seen;
            int count = 0;
            for (unsigned int j=0; j<m_layers[i].size(); j++ ) {
-             //std::cout << "apr:" << i << "--" << j << std::endl;
+             std::cout << "apr:" << i << "--" << j << " known as " << m_layers[i][j]->get_name() << std::endl;
              count = count + count_intersections(seen,get_insts(m_layers[i][j]));
-              //std::cout << "---" << std::endl;
+              std::cout << "---" << std::endl;
            }
-           //std::cout << " intersections for " << i << "-" << i+1 << "  " << count << std::endl;
+           std::cout << " intersections for " << i << "-" << i+1 << "  " << count << std::endl;
         return count;
         }
         
         bool mypred(int a)
         {
-            //std::cout <<"     mypred" << a << " " << m_cvalue << std::endl;
+            std::cout <<"     mypred" << a << " " << m_cvalue << std::endl;
             //std::cout <<"mypred" << a << std::endl;
             //return true;
             return ( m_cvalue < a );
@@ -196,17 +199,17 @@ class JManager {
                 si = seen.begin();
               }*/
               //std::count_if(seen.begin(), seen.end(), f )
-             //std::cout << "set size" << seen.size() << std::endl;
-             //std::cout << "processing " << (*i)->get_name() << std::endl;
+             std::cout << "set size" << seen.size() << std::endl;
+             std::cout << "processing " << (*i)->get_name() << std::endl;
              m_cvalue = (*i)->get_center().y;
               //std::count_if(seen.begin(), seen.end(),f );
               res = res + std::count_if(seen.begin(), seen.end(), std::bind1st(std::mem_fun(&JManager::mypred),1));
-              //std :: cout << " res = " << res << std::endl;
+              std :: cout << " res = " << res << std::endl;
               seen.insert((*i)->get_center().y);
               m_cvalue = 0;
-              //std::cout << " set inserted -!-" << (*i)->get_center().y << std::endl;
+              std::cout << " set inserted -!-" << (*i)->get_center().y << std::endl;
             }
-            //std::cout << "-!-" << res << std::endl;
+            std::cout << "-!-" << res << std::endl;
          return res;
         }
  
@@ -224,7 +227,7 @@ class JManager {
 
               for (it=itlow; it!=itup; ++it) v.push_back((*it).second);
               
-             //std::cout << " SIZE=" << v.size() << std::endl;
+             std::cout << " SIZE=" << v.size() << std::endl;
               return v;
         }
         
@@ -252,10 +255,10 @@ class JManager {
         }
         
         void do_and_draw() {
-            place();
+            //place();
             //propogate();
             //calc_intersections();
-            //draw();
+            draw();
         }
         
         void add_change() {
@@ -270,7 +273,10 @@ class JManager {
 	      int s = rand()%m_layers[ln].size();
 	      if ( f == s ) return;
 	      
-	      
+	      std::swap(m_layers[ln][f],m_layers[ln][s]);
+	      //m_layers[ln][f]
+	      // m_layers[ln][s] = m_layers[ln][f];
+              //m_layers[ln][s] = tmp;
 	      
 	      if ( m_permuted.size() > 0 ) m_permuted.erase(m_permuted.begin(),m_permuted.begin()+m_permuted.size());
 	      
@@ -294,12 +300,18 @@ class JManager {
 	      //for(unsigned init i=0; i<count; i++ ) permute_rand_instances_in_layer(rand()%m_layers_cnt);
 	}
 	
+	//FIXME!!!
 	void permute_two_instances(JInstance* f, JInstance* s) {
-               SDL_Point ns = s->get_center();
+              
+              SDL_Point ns1 = s->get_center();
+               SDL_Point nf1 = f->get_center();
+               SDL_Point tmp2 = s->get_center();
+               
+              SDL_Point ns = s->get_center();
                SDL_Point nf = f->get_center();
                SDL_Point tmp = s->get_center();
                
-              /*
+             //*
                for(float i=s->get_center().y; i < f->get_center().y; i=i+10.0 ) {
                  ns.y = i;
                  s->set_center(ns);
@@ -311,11 +323,11 @@ class JManager {
                  f->set_center(nf);
                  draw();
               }
-              */
+              /**/
               
               //SDL_Point tmp = s->get_center();
-              s->set_center(f->get_center());
-              f->set_center(tmp);
+              s->set_center(nf1);
+              f->set_center(ns1);
               draw();
                             
               JInstance* tmp1 = s;
