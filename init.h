@@ -11,7 +11,7 @@ and may not be redistributed without written permission.*/
 #include <string>
 #include <cmath>
 
-//#include <SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -25,6 +25,8 @@ bool loadMedia();
 
 //Frees media and shuts down SDL
 void close();
+
+TTF_Font* gTTF_font = NULL;
 
 //Loads individual image as texture
 SDL_Texture* loadTexture( std::string path );
@@ -41,11 +43,18 @@ bool init(const std::string& title)
         bool success = true;
 	
 	 	
-     /* if(!TTF_WasInit() && TTF_Init()==-1) {
+     //*
+     if(!TTF_WasInit() && TTF_Init()==-1) {
 	  printf("TTF_Init: %s\n", TTF_GetError());
 	  exit(1);
       }
-*/
+      
+      gTTF_font = TTF_OpenFont("DejaVuSans.ttf", 10); 
+      if(!gTTF_font) {  
+        printf("TTF_OpenFont: %s\n", TTF_GetError());
+        return 1;
+      }
+/**/
         //Initialize SDL
         if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
         {
