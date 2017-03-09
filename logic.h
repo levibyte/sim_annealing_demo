@@ -75,7 +75,6 @@ class JInstance {
 	
 	SDL_Color m_color;  
         
-        //std::count_if(seen_pcer.begin(), seen_pcer.end(), [,](int x, int y) { (x>0 && JManager::mypred() > 0)});
   
 };
 
@@ -83,7 +82,7 @@ class JManager {
   
   public:  
     
-	JManager():m_layers_cnt(9),m_max_per_clm(7),m_conn_density(1),m_last_fitness(0) {
+	JManager():m_layers_cnt(5),m_max_per_clm(5),m_conn_density(1),m_last_fitness(0),m_last_res(0) {
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
 	  init_data();
@@ -117,7 +116,7 @@ class JManager {
           
          SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
          SDL_RenderClear( gRenderer );
-           
+          //* 
 	  for(unsigned i=0; i<m_layers_cnt; i++)
 	    for (unsigned int j=0; j<m_layers[i].size(); j++ ) {
 	      draw_circle(m_layers[i][j]->get_center(),5,m_layers[i][j]->get_color());  
@@ -128,19 +127,31 @@ class JManager {
 	    for(i=m_connections.begin();i!=m_connections.end();++i)
 	      SDL_RenderDrawLine(gRenderer,(*i).first->get_center().x,(*i).first->get_center().y,
 					   (*i).second->get_center().x,(*i).second->get_center().y);
+	    /**/
 	    SDL_RenderPresent( gRenderer );
              
 	}
 
         void update() {
-          simulate_annealing();
+          //add_change();
+          //calc_intersections();
+          //std::cout << "SCORE:" << m_last_fitness << std::endl;
+
+	  /*add_change();
+
+	  SDL_Delay(10);
+
+	  undo_permute();
+          calc_intersections();
+	  */
+	  
+	  simulate_annealing();
           //print_dbg();
           //calc_intersections();
           //draw();
           //undo_permute();
           //calc_intersections();
         }
-
 
 
         float decrease_temperature( float t, int k) {
@@ -150,32 +161,44 @@ class JManager {
         }
 
         float get_transition_probability(int E, float T ) {
-          return exp(-E/T);
+          //std::cout << m_last_fitness << "----" << E << " = "<< m_last_fitness-E << std::endl;
+	  return exp(-E/T);
         }
           
         void try_make_movement(int E, float T) {
             float p = get_transition_probability(E,T);
-            float v = rand();
+            //int v = rand()%1;
+	    float v = ((double) rand() / (RAND_MAX)) ;
 
             //std::cout << "p is " << p << " , v is" << v << std::endl;
-            if( v >= p ) {
-                std::cout << "Nooooo" << std::endl;
+            //assert(0);
+	    if( v >= p ) {
+	        //assert(0);
+                //std::cout << "Nooooo" << std::endl;
                 undo_permute();
+		calc_intersections();
             } else {
-              assert(0);
-                std::cout << "Accepted" << std::endl;
+	      std::cout << " --- " << std::endl;
+	      std::cout << "p is " << p << " , v is " << v << std::endl;
+              std::cout << "RES:" << m_last_res << " BES: " << m_last_fitness << std::endl;
+	      std::cout << " --- " << std::endl;
+	      std::cout << std::endl;
+              //assert(0);
+              //std::cout << "Accepted" << std::endl;
             }
-        }
+	    //std::cout << "---" << std::endl;
+	  
+	}
           
 
         void simulate_annealing() {
-              float T = 100000.0;
+              float T = 1000000.0;
               float current_t = T;
-              float cold_t = 0.5;
+              float cold_t = 1.0;
               int k = 1;
               
               while ( current_t > cold_t ) {
-                  //std::cout << current_t << std::endl;
+                  //std::cout << "temp = " << current_t << std::endl;
                   add_change();
                   int c = calc_intersections(); 
                  
@@ -184,15 +207,14 @@ class JManager {
                   else
                     try_make_movement(c,current_t);
              
-                   
                    //current_t = T/log(k);
                    //k = k + 0.1;
                    current_t = decrease_temperature(T,k);
-                  
                    k = k + 1;
+		  draw();
               }
               
-              std::cout << "SCORE:" << m_last_fitness << std::endl;
+              std::cout << "SCORE:" << m_last_res << " BEST: " << m_last_fitness << std::endl;
         }
         
         /*
@@ -266,7 +288,7 @@ class JManager {
           
           //std::cout << "FI: " << r << std::endl;
           //std::cout << "************************\n\n" << std::endl;
-          
+          m_last_res = r;
           return r;
         }
         
@@ -299,6 +321,7 @@ class JManager {
             
            // std::set<int>::iterator si = seen.begin();
            std::vector<int> v = get_real_vect(v1);
+	   std::sort(v.begin(),v.end());
            m_cvalue = 0; 
             int res = 0;
             for(i=v.begin();i!=v.end();++i) {
@@ -319,10 +342,10 @@ class JManager {
               //std :: cout << "   res = " << res << std::endl;
               seen.insert(m_cvalue);
               
-             // std::cout << "   set inserted -!-" << m_cvalue << std::endl;
+             //std::cout << "   set inserted -!-" << m_cvalue << std::endl;
               m_cvalue = 0;
             }
-           // std::cout << "  -!-" << res << std::endl;
+            //std::cout << "  -!-" << res << std::endl;
          return res;
         }
  
@@ -383,7 +406,7 @@ class JManager {
             //place();
             //propogate();
             //calc_intersections();
-            draw();
+            //draw();
         }
         
         void add_change() {
@@ -391,14 +414,14 @@ class JManager {
 	      //int count = rand()%m_layers_cnt;
 	      //for(unsigned int i=0; i<count; i++ ) permute_two_rand_instances_in_layer(rand()%m_layers_cnt);
               
-              permute_two_rand_instances_in_layer(rand()%m_layers_cnt);
+              while ( ! permute_two_rand_instances_in_layer(rand()%m_layers_cnt) );
 	}
         
-        void permute_two_rand_instances_in_layer(int ln) {
+        bool permute_two_rand_instances_in_layer(int ln) {
 	      //assert(0);
 	      int f = rand()%m_layers[ln].size();
 	      int s = rand()%m_layers[ln].size();
-	      if ( f == s ) return;
+	      if ( f == s ) return false;
 	      
 	      //std::cout << "permuting m_layers["<< ln << "]["<< f << "] <=> m_layers["<< ln << "]["<< s << "]" << std::endl;
 	      //std::swap(m_layers[ln][f],m_layers[ln][s]);
@@ -406,8 +429,8 @@ class JManager {
 	      // m_layers[ln][s] = m_layers[ln][f];
               //m_layers[ln][s] = tmp;
 	      
-	      if ( m_permuted.size() > 0 ) m_permuted.erase(m_permuted.begin(),m_permuted.begin()+m_permuted.size());
-               if ( m_fixme_permuted.size() > 0 ) m_fixme_permuted.erase(m_fixme_permuted.begin(),m_fixme_permuted.begin()+m_fixme_permuted.size());
+	      if ( !m_permuted.empty() ) m_permuted.erase(m_permuted.begin(),m_permuted.begin()+m_permuted.size());
+               if ( !m_fixme_permuted.empty() ) m_fixme_permuted.erase(m_fixme_permuted.begin(),m_fixme_permuted.begin()+m_fixme_permuted.size());
 	      
               std::pair<JInstance*,JInstance*> k;
               if ( m_layers[ln][f]->get_center().y > m_layers[ln][s]->get_center().y )
@@ -426,6 +449,8 @@ class JManager {
               
               permute_two_instances(k.first,k.second);
               std::swap(m_layers[ln][f],m_layers[ln][s]);
+	      
+	      return true;
               //JInstance* tmp =  m_layers[ln][f];
               //m_layers[ln][f] = new JInstance(*m_layers[ln][s]);
               //m_layers[ln][s] = new JInstance(*tmp);
@@ -462,13 +487,13 @@ class JManager {
                SDL_Point tmp = s->get_center();
                
              /*
-               for(float i=s->get_center().y; i < f->get_center().y; i=i+50.0 ) {
+               for(float i=s->get_center().y; i < f->get_center().y; i=i+10.0 ) {
                  ns.y = i;
                  s->set_center(ns);
                  draw();
               }
               
-             for(float i=f->get_center().y; i > tmp.y; i=i-50.0 ) {
+             for(float i=f->get_center().y; i > tmp.y; i=i-10.0 ) {
                  nf.y = i;
                  f->set_center(nf);
                  draw();
@@ -478,15 +503,20 @@ class JManager {
               //SDL_Point tmp = s->get_center();
               s->set_center(nf1);
               f->set_center(ns1);
-              draw();
+              //draw();
                             
             
               
-              draw();
+              //draw();
         }
         
         void undo_permute() {
-          std::vector<std::pair<JInstance*,JInstance*> >::iterator i;
+	  if (m_permuted.empty()) return;
+
+	  //std::cout << "----undo--" << std::endl;
+         
+	  std::vector<std::pair<JInstance*,JInstance*> >::iterator i;
+	  
           int q = 0;
           for (i=m_permuted.begin();i!=m_permuted.end();i++) 
           { 
@@ -494,12 +524,16 @@ class JManager {
             std::swap(m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.second],m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.first]);
             q++;
           }
+          
+	  if ( !m_permuted.empty() ) m_permuted.erase(m_permuted.begin(),m_permuted.begin()+m_permuted.size());
+	  if ( !m_fixme_permuted.empty() ) m_fixme_permuted.erase(m_fixme_permuted.begin(),m_fixme_permuted.begin()+m_fixme_permuted.size());
+      
         }
 	
         void init_data() {
 	    for (unsigned int i=0; i<m_layers_cnt; i++ ) {
-	      int perclm = 1+rand()%m_max_per_clm;
-	      //int perclm = m_max_per_clm;
+	      //int perclm = 1+rand()%m_max_per_clm;
+	      int perclm = m_max_per_clm;
               m_layers[i].resize(perclm);
 	      for (unsigned int j=0; j<perclm ; j++ ) {
 		SDL_Point p;
@@ -553,6 +587,7 @@ class JManager {
 	int m_conn_density;
         
         int m_last_fitness;
+	int m_last_res;
         
         static int m_cvalue;
         ;

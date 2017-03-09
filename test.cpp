@@ -22,29 +22,37 @@ int main( int argc, char* args[] )
         //j->init_data();
        
         //SDL_RenderSetScale(gRenderer,6.0,6.0);
-       
+
         while( !quit )
         {
-                while( SDL_PollEvent( &e ) != 0 )
-                {
-                        if ( e.type == SDL_QUIT ) quit = true;
-                        if ( e.type == SDL_MOUSEBUTTONDOWN ) j->update();
-			if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
-                            if(!j) delete j; 
-                            j = new JManager;
-                            //j->init_data();
-                            //j->set_classes();
-                        }
-                } 
- 
-                //currentTime = SDL_GetTicks();
-                //if (currentTime > lastTime + 100) {
-                //  lastTime = currentTime;
-                    j->do_and_draw();
-                //}
-                
-                
-                
+                currentTime = SDL_GetTicks();
+                if (currentTime > lastTime + 100) {
+
+		    while( SDL_PollEvent( &e ) != 0 )
+		    {
+			    if ( e.type == SDL_QUIT ) quit = true;
+			    if ( e.type == SDL_MOUSEBUTTONDOWN ) j->update();
+			    if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
+				if(!j) delete j; 
+				j = new JManager;
+				//j->init_data();
+				//j->set_classes();
+			    }
+
+			    if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_u) {
+				j->undo_permute();
+				//if(!j) delete j; 
+				//j = new JManager;
+				//j->init_data();
+				//j->set_classes();
+			    }
+			    
+			    
+		    } 
+	
+		    j->do_and_draw();
+		    lastTime = currentTime;  
+		}
         }
 
         close();

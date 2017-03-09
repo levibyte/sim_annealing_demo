@@ -49,10 +49,11 @@ bool init(const std::string& title)
 	  exit(1);
       }
       
-      gTTF_font = TTF_OpenFont("DejaVuSans.ttf", 10); 
+      gTTF_font = TTF_OpenFont("FreeSans.ttf", 10); 
       if(!gTTF_font) {  
         printf("TTF_OpenFont: %s\n", TTF_GetError());
-        return 1;
+        exit(1);
+	// return 1;
       }
 /**/
         //Initialize SDL
