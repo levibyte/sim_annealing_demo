@@ -82,13 +82,16 @@ class JManager {
   
   public:  
     
-	JManager():m_layers_cnt(5),m_max_per_clm(5),m_conn_density(1),m_last_fitness(0),m_last_res(0) {
+	JManager():m_layers_cnt(7),m_max_per_clm(3),m_conn_density(1),m_last_fitness(0),m_last_res(0) {
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
 	  init_data();
           
           m_last_fitness = calc_intersections();
+	  
+	  m_start_res = m_last_fitness;
           //print_dbg();
+	  draw();
           std::cout << "BEGIN:" <<  m_last_fitness << std::endl;
 	}
 
@@ -161,16 +164,19 @@ class JManager {
         }
 
         float get_transition_probability(int E, float T ) {
-          //std::cout << m_last_fitness << "----" << E << " = "<< m_last_fitness-E << std::endl;
+          //std::cout << m_prev_res << "----" << E << " = "<< m_prev_res-E << std::endl;
 	  return exp(-E/T);
         }
           
         void try_make_movement(int E, float T) {
             float p = get_transition_probability(E,T);
-            //int v = rand()%1;
 	    float v = ((double) rand() / (RAND_MAX)) ;
 
+    
             //std::cout << "p is " << p << " , v is" << v << std::endl;
+	    assert( p>0 || p<1 );
+  	    assert(E>m_prev_res);
+	    
             //assert(0);
 	    if( v >= p ) {
 	        //assert(0);
@@ -178,43 +184,62 @@ class JManager {
                 undo_permute();
 		calc_intersections();
             } else {
-	      std::cout << " --- " << std::endl;
+	      //std::cout << "From: " << m_last_fitness << " To: " << m_last_res << std::endl;
+	      //m_last_fitness = m_last_res;
+	      /*std::cout << " --- " << std::endl;
 	      std::cout << "p is " << p << " , v is " << v << std::endl;
               std::cout << "RES:" << m_last_res << " BES: " << m_last_fitness << std::endl;
 	      std::cout << " --- " << std::endl;
 	      std::cout << std::endl;
-              //assert(0);
+              */
+	      //assert(0);
               //std::cout << "Accepted" << std::endl;
             }
 	    //std::cout << "---" << std::endl;
 	  
 	}
           
+        void make_change() {
+	          add_change();
+                  calc_intersections(); 
+	}
 
         void simulate_annealing() {
-              float T = 1000000.0;
-              float current_t = T;
-              float cold_t = 1.0;
-              int k = 1;
-              
-              while ( current_t > cold_t ) {
-                  //std::cout << "temp = " << current_t << std::endl;
-                  add_change();
-                  int c = calc_intersections(); 
-                 
-                  if ( c <= m_last_fitness ) 
-                    m_last_fitness = c;
-                  else
-                    try_make_movement(c,current_t);
+              float T0 = 10000.0;
+              float Tmin = 0.1;
+              float alpha = 0.9;
+              float delta_t = 0.1;
+	      float step_k = 0.1;
+	      
+	      float k = 1.0;
+	      float current_T = T0;
+              while ( current_T > Tmin ) {
+                  //std::cout << "temp = " << current_T << std::endl;
+        
+		  make_change();
+                  if ( m_last_res <= m_last_fitness ) 
+                    m_last_fitness = m_last_res;
+		  
+		  if ( m_last_res > m_prev_res ) 
+                    try_make_movement(m_last_res,current_T);
              
-                   //current_t = T/log(k);
-                   //k = k + 0.1;
-                   current_t = decrease_temperature(T,k);
-                   k = k + 1;
+		  current_T = T0*pow(alpha,k);
+		  //current_T = T0 - alpha*k;
+		  //current_T = decrease_temperature(T0,k);
+		  //std::cout << "temp = " << current_t << std::endl;
+        
+		  //current_t = current_t - delta_t; 
+		  //current_t = current_t*alpha;  
+		  //current_t = current_t  - alpha*k;
+		  //current_t = T0 - alpha*k;
+		  //current_t = alpha/log(k);
+
+		  m_prev_res = m_last_res;
+		  k = k + step_k;
 		  draw();
               }
               
-              std::cout << "SCORE:" << m_last_res << " BEST: " << m_last_fitness << std::endl;
+              std::cout << "INI: " << m_start_res << " CURRENT:" << m_last_res << " BEST: " << m_last_fitness << std::endl;
         }
         
         /*
@@ -505,9 +530,6 @@ class JManager {
               f->set_center(ns1);
               //draw();
                             
-            
-              
-              //draw();
         }
         
         void undo_permute() {
@@ -547,6 +569,10 @@ class JManager {
 		m_layers[i][j] = ii;
 		//std::cout << i << " " << j << std::endl;
 		 if (i) {
+		   //add_preds();
+		   //int last_col_size = m_layers[i-1].size();
+		   //JInstance* ri = m_layers[i-1][]
+		   //*
 		  //int k = 1 + rand()%m_layers[i-1].size();
 		  int k = 1+rand()%m_conn_density; 
 		  //std::vector<int> indexes(k);
@@ -565,6 +591,7 @@ class JManager {
                       m_connections.insert(p);
                       seen.insert(ri);
                     }
+                    /**/
 		  }
 		}
 	      }
@@ -586,9 +613,11 @@ class JManager {
 	int m_layers_cnt;
 	int m_conn_density;
         
+	int m_start_res;
         int m_last_fitness;
 	int m_last_res;
-        
+        int m_prev_res;
+	
         static int m_cvalue;
         ;
 };
