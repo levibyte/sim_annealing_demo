@@ -1,4 +1,4 @@
-#include "init.h"
+#include "renderer.h"
 #include "logic.h"
 
 #include <map>
@@ -8,21 +8,19 @@
 #include <cmath>
 #include <iostream>
 
+#include <SDL.h>
 
 int main( int argc, char* args[] )
 {
-       if( !init("Simulated annealing placement test") ) exit(1);
-       if( !loadMedia() ) exit(1);
 
-        bool quit = false;
+	JRenderer renderer("Simulated annealing placement test");
         SDL_Event e;
-        JManager* j = new JManager;
+        JManager* j = new JManager(&renderer);
 
         unsigned int lastTime = 0, currentTime;
-        //j->init_data();
-       
         //SDL_RenderSetScale(gRenderer,6.0,6.0);
 
+	bool quit = false;
         while( !quit )
         {
                 currentTime = SDL_GetTicks();
@@ -31,20 +29,14 @@ int main( int argc, char* args[] )
 		    while( SDL_PollEvent( &e ) != 0 )
 		    {
 			    if ( e.type == SDL_QUIT ) quit = true;
-			    if ( e.type == SDL_MOUSEBUTTONDOWN ) j->update();
+			    if ( e.type == SDL_MOUSEBUTTONDOWN ) j->action();
 			    if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
 				if(!j) delete j; 
-				j = new JManager;
-				//j->init_data();
-				//j->set_classes();
+				j = new JManager(&renderer);
 			    }
 
 			    if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_u) {
 				j->undo_permute();
-				//if(!j) delete j; 
-				//j = new JManager;
-				//j->init_data();
-				//j->set_classes();
 			    }
 			    
 			    
@@ -55,6 +47,6 @@ int main( int argc, char* args[] )
 		}
         }
 
-        close();
+        renderer.close();
         return 0;
 }
