@@ -49,8 +49,9 @@ class JManager {
 
 	    
         void action();
-	void revert();
+	int revert();
         int change();
+	
         std::pair<int,int> get_id_by_inst(JInstance* inst);
         std::vector<int> get_real_vect(const std::vector<JInstance*>& iv);
         void print_dbg();
@@ -87,7 +88,7 @@ class JMySimulateAnnealingImpl : public JSimulateAnnealingImpl
 {
     public:
 	  JMySimulateAnnealingImpl(JManager* j):m_logic(j) { assert(m_logic); }
-	  virtual void revert_change() { m_logic->revert(); }
+	  virtual int revert_change() { return m_logic->revert(); }
 	  virtual int  make_change() { return m_logic->change(); }
 	  virtual void post_process() { m_logic->draw(); }
 

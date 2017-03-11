@@ -21,14 +21,14 @@
 	    JSimulateAnnealingImpl* impl = new JMySimulateAnnealingImpl(this);
 	    JSimulateAnnealing j(impl);
 	    j.simulate();
-	    std::cout << "BEGIN: " << m_start_res << " CURRENT:" << m_last_res << std::endl;
+	    std::cout << "BEGIN: " << m_start_res << " CURRENT: " << m_last_res << std::endl;
 	    //<< " BEST: " << m_last_fitness << std::endl;
         }
 
 
-	void JManager::revert() {
+	int JManager::revert() {
 	      undo_permute();
-	      calc_intersections(); 
+	      return calc_intersections(); 
 	}
 
          int JManager::change() {
@@ -167,10 +167,10 @@
 	}
         
         void JManager::add_change() {
-	      int count = rand()%m_layers_cnt;
-	      for(unsigned int i=0; i<count; i++ ) permute_two_rand_instances_in_layer(rand()%m_layers_cnt);
+	      //int count = rand()%m_layers_cnt;
+	      //for(unsigned int i=0; i<count; i++ ) permute_two_rand_instances_in_layer(rand()%m_layers_cnt);
               
-              //while ( ! permute_two_rand_instances_in_layer(rand()%m_layers_cnt) );
+              while ( ! permute_two_rand_instances_in_layer(rand()%m_layers_cnt) );
 	}
         
         bool JManager::permute_two_rand_instances_in_layer(int ln) {
