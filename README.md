@@ -32,9 +32,9 @@ Then you can use JSimulateAnnealing class wich will perform actual SA.
 More visual example goes within package (SDL needed).
 Target is to reduce number of intercrossings by performing more optimal placement.
 
-Random placement ( each module can have only connections to modules in next adjcent column)
-![ztext]( https://image.ibb.co/n428La/bsmall.png "Before")
+Starting with random placement ( each module can have only connections to modules in next adjcent column)
+<img src="https://image.ibb.co/n428La/bsmall.png">
 
 Placement after applying SA.
-![btext]( https://image.ibb.co/cHreRF/asmall.png "After")
+<img src="https://image.ibb.co/cHreRF/asmall.png">
 
