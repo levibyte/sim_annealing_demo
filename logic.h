@@ -32,7 +32,7 @@ class JManager {
 		    int m_v;
 	   };
     
-	JManager(JRenderer* r):m_renderer(r),m_layers_cnt(5),m_max_per_clm(5),m_conn_density(1),m_last_res(0) {
+	JManager(JRenderer* r):m_renderer(r),m_layers_cnt(13),m_max_per_clm(10),m_conn_density(1),m_last_res(0) {
 	  
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));

@@ -17,12 +17,24 @@
 
 	    
         void JManager::action() {
+	    
+	    /*SDL_RenderClear( m_renderer->get() );
+	    SDL_SetRenderDrawColor( m_renderer->get(), 0, 0, 0, 255);
+	    //SDL_RenderClear( m_renderer->get() );
+	    SDL_RenderPresent( m_renderer->get() );
+	    */
+	    
+	    
 	    JSimulateAnnealingImpl* impl = new JMySimulateAnnealingImpl(this);
-	    JSimulateAnnealing j(impl);
+	    //JSimulateAnnealing j(impl*,T0,Tmin,time_step);
+	    JSimulateAnnealing j(impl,100000.0,0.01,0.01);
 	    j.simulate();
 	    
+	    
 	    calc_intersections();
+	    draw();
 	    std::cout << "BEGIN: " << m_start_res << " CURRENT: " << m_last_res << std::endl;
+	    m_start_res = m_last_res;
 	    //<< " BEST: " << m_last_fitness << std::endl;
         }
 
