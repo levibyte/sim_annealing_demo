@@ -35,9 +35,10 @@ int main( int argc, char* args[] )
 				j = new JManager(&renderer);
 			    }
 
-			    if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_u) {
-				j->undo_permute();
-			    }
+			    //for dbg
+			    //if ( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_u) {
+				//j->undo_permute();
+			    //}
 			    
 			    
 		    } 

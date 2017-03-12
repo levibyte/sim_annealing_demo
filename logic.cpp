@@ -21,14 +21,16 @@
 	    JSimulateAnnealingImpl* impl = new JMySimulateAnnealingImpl(this);
 	    JSimulateAnnealing j(impl);
 	    j.simulate();
+	    
+	    calc_intersections();
 	    std::cout << "BEGIN: " << m_start_res << " CURRENT: " << m_last_res << std::endl;
 	    //<< " BEST: " << m_last_fitness << std::endl;
         }
 
 
-	int JManager::revert() {
+	void JManager::revert() {
 	      undo_permute();
-	      return calc_intersections(); 
+	      //return calc_intersections(); 
 	}
 
          int JManager::change() {

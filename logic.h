@@ -49,7 +49,7 @@ class JManager {
 
 	    
         void action();
-	int revert();
+	void revert();
         int change();
 	
         std::pair<int,int> get_id_by_inst(JInstance* inst);
@@ -88,7 +88,7 @@ class JMySimulateAnnealingImpl : public JSimulateAnnealingImpl
 {
     public:
 	  JMySimulateAnnealingImpl(JManager* j):m_logic(j) { assert(m_logic); }
-	  virtual int revert_change() { return m_logic->revert(); }
+	  virtual void revert_change() { m_logic->revert(); }
 	  virtual int  make_change() { return m_logic->change(); }
 	  virtual void post_process() { m_logic->draw(); }
 
