@@ -42,7 +42,7 @@ bool init(const std::string& title)
       gTTF_font = TTF_OpenFont("FreeSans.ttf", 10); 
       if(!gTTF_font) {  
         printf("TTF_OpenFont: %s\n", TTF_GetError());
-        exit(1);
+        //exit(1);
       }
 
       //Initialize SDL

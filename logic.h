@@ -13,7 +13,6 @@
 #include <sstream>
 #include <functional>
 
-#include "init.h"
 #include "instance.h"
 #include "algo.h"
 #include "renderer.h"

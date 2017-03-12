@@ -1,5 +1,4 @@
 #include "logic.h"
-#include "init.h"
 #include "instance.h"
 #include "algo.h"
 #include "renderer.h"
