@@ -37,7 +37,7 @@ Starting with random placement ( each module can have only connections to module
 ---
 <img src="https://image.ibb.co/n428La/bsmall.png">
 
-New placement after applying SA.
+The optimized placement after applying SA.
 ---
 <img src="https://image.ibb.co/cHreRF/asmall.png">
 
