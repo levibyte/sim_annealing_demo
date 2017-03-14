@@ -1,4 +1,5 @@
-# simulated annealing ( and simple placement demo)
+simulated annealing ( and simple placement demo)
+===
 This is just-for-fun project which will try to provide "generic" code for simulated annealing.
 Actual SA is in algo.h file, so you just need this single header if you like to use SA in your task.
 
@@ -33,8 +34,10 @@ More visual example goes within package (SDL needed).
 Target is to reduce number of intercrossings by performing more optimal placement.
 
 Starting with random placement ( each module can have only connections to modules in next adjcent column)
+---
 <img src="https://image.ibb.co/n428La/bsmall.png">
 
-Placement after applying SA.
+New placement after applying SA.
+---
 <img src="https://image.ibb.co/cHreRF/asmall.png">
 
