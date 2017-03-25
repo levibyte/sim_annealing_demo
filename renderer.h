@@ -147,8 +147,8 @@ void close()
 	      SDL_Rect Message_rect; 
 	      Message_rect.x = p.x;  
 	      Message_rect.y = p.y; 
-	      Message_rect.w = 25; 
-	      Message_rect.h = 25; 
+	      Message_rect.w = 20; 
+	      Message_rect.h = 20; 
 
 	      SDL_RenderCopy(gRenderer, Message, NULL, &Message_rect); 
 	}

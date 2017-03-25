@@ -8,6 +8,7 @@ class JInstance {
     
     public: 
 	JInstance() {
+	      
 	    m_color.r = rand()%255;
 	    m_color.g = rand()%255;
 	    m_color.b = rand()%255;
@@ -15,7 +16,7 @@ class JInstance {
             
             m_name = "zurna-dhol";
             
-	}
+	}	
       
     public:
 	const SDL_Point& get_center() { return m_center_point ; }
@@ -25,11 +26,11 @@ class JInstance {
         void set_name(std::string s) { m_name = s;}
         std::string get_name() { return m_name; }
         
-        void set_value(int v) { m_value = v; }
-	int get_value() { return m_value; }
+        void set_rownum(int v) { m_rownum = v; }
+	int get_rownum() { return m_rownum; }
       
     private:
-	int m_value;
+	int m_rownum;
 	SDL_Point m_center_point;
 	std::string m_name;
 	

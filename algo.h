@@ -19,8 +19,14 @@ class JSimulateAnnealingImpl {
 	
       virtual float decrease_temperature(float T0, float T, float time) {
 	    float alpha = 0.9;
-	    //float delta_t;
-	    return T0*pow(alpha,time);
+	    float beta = 10;
+	    float delta_t = 1.0;
+	    
+	    //return T0 - beta*time;
+	    //return T0/(1+alpha*log(1+time));	
+	    
+	    return T0/(1+alpha*time);	
+	    //return T0*pow(alpha,time);
 	  }
 
 	virtual  float get_transition_probability(int E, float T ) {
@@ -86,6 +92,7 @@ class JSimulateAnnealing  {
 		
 		  m_prev_res = res;
 		  T = m_impl->decrease_temperature(T0,T,time);
+		  assert(T0>T);
 		  time = time + time_step;
 		  post_process();
    		  

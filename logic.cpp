@@ -24,17 +24,19 @@
 	    SDL_RenderPresent( m_renderer->get() );
 	    */
 	    
-	    
+	    /*
 	    JSimulateAnnealingImpl* impl = new JMySimulateAnnealingImpl(this);
 	    //JSimulateAnnealing j(impl*,T0,Tmin,time_step);
-	    JSimulateAnnealing j(impl,100000.0,0.01,0.01);
+	    JSimulateAnnealing j(impl,10000.0 , 0.5 , 0.1);
 	    j.simulate();
+	    calc_intersections();
+	    */
 	    
-	    
+	    add_change();
 	    calc_intersections();
 	    draw();
 	    std::cout << "BEGIN: " << m_start_res << " CURRENT: " << m_last_res << std::endl;
-	    m_start_res = m_last_res;
+	    //m_start_res = m_last_res;
 	    //<< " BEST: " << m_last_fitness << std::endl;
         }
 
@@ -49,45 +51,16 @@
 	      return calc_intersections(); 
 	}
        
-
-	//FIXME
-        std::pair<int,int> JManager::get_id_by_inst(JInstance* inst) {
-            
-            unsigned int a=0;
-            unsigned int b=0;
-            
-            bool found = false;
-            
-            for(unsigned int i=0; i<m_layers_cnt; ++i ) {
-                for (unsigned int j=0; j<m_layers[i].size(); ++j )  {
-                  //std::cout << i << " " << j << "::: " << inst << " ?"  << m_layers[i][j] << std::endl;               
-                  if ( m_layers[i][j] == inst ) { a=i; b=j; found=true; break; }
-                }    
-               if (found) break;
-            }    
-              //std::cout << "               " << a << "::" << b << std::endl;    
-              
-           return std::make_pair<int,int>(a,b);
-        }
         
-        std::vector<int> JManager::get_real_vect(const std::vector<JInstance*>& iv) {
-          std::vector<int> ov;
-          for(int i=0;i<iv.size();i++) ov.push_back(get_id_by_inst(iv[i]).second);
+        std::multiset<int> JManager::get_real_vect(const std::vector<JInstance*>& iv, bool dbg=false) {
+          std::multiset<int> ov;
+          for(int i=0;i<iv.size();i++) {
+	    if(dbg)  std::cout << "               name:" << iv[i]->get_name() << " pos:" << iv[i]->get_rownum() << std::endl;
+	    ov.insert(iv[i]->get_rownum());
+	  }
+	  if (dbg) std::cout << std::endl;
           
           return ov;
-        }
-        
-        
-        void JManager::print_dbg() {
-         std::cout << "DBG begin: " << std::endl;
-          for(unsigned int i=0; i<m_layers_cnt; i++ ) {
-          for (unsigned int j=0; j<m_layers[i].size(); j++ ) {
-           std::cout << "m_layers["<< i << "]["<< j << "] is " << m_layers[i][j] << " aka " << m_layers[i][j]->get_name() << std::endl;
-           get_insts(m_layers[i][j]);
-          }
-           std::cout << std::endl;
-          }
-         std::cout << "DBG end: \n\n" << std::endl;
         }
         
         int JManager::calc_intersections() {
@@ -104,23 +77,25 @@
            std::multiset<int> seen;
            int count = 0;
            
-           //FIXME veryugly
-           std::vector<int> real_v = get_real_vect(m_layers[i]);
-           
+           std::multiset<int> real_v = get_real_vect(m_layers[i]);
+
+	    std::cout << "\n\n\n\n****intersections for " << i << "->" << i + 1 << "\n" ;
+
            for (unsigned int j=0; j<real_v.size(); j++ ) {
-             count = count + count_intersections(seen,get_insts(m_layers[i][j]));
-           }
- 
-	   return count;
+             std::cout << "  ." << i << " "  << j <<" looking by the name of" << m_layers[i][j]->get_name() << std::endl;
+	     count = count + count_intersections(seen,get_insts(m_layers[i][j]));
+	   }
+	    std::cout << "intersections for " << i << "->" << i + 1 << " ***"<< count  << "*** \n \n" ;
+	    return count;
         }
         
-        
+ 
         int JManager::count_intersections(std::multiset<int>& seen, const std::vector<JInstance*>& v1) {
-	    std::vector<int>::const_iterator i;
-	    std::vector<int> v = get_real_vect(v1);
-	    std::sort(v.begin(),v.end());
+	      std::multiset<int> v = get_real_vect(v1,true);
+	    
 	      int res = 0;
-	      for(i=v.begin();i!=v.end();++i) {
+	      for(std::multiset<int>::const_iterator i=v.begin();i!=v.end();++i) {
+		
 		res = res + std::count_if(seen.begin(), seen.end(), ay_qez_ban(*i));
 		seen.insert(*i);
 	      }
@@ -131,72 +106,40 @@
  
         //FIXME!
         std::vector<JInstance*> JManager::get_insts(JInstance* i) {
-             
               std::vector<JInstance*> v;//, v2;
-              //std::vector<int> v1;
-              
+               std::cout << "      " << i->get_name() << " get_inst:" << std::endl;
                std::multimap<JInstance*,JInstance*>::iterator itlow = m_connections.lower_bound(i);  
                std::multimap<JInstance*,JInstance*>::iterator itup = m_connections.upper_bound(i);   
-                std::multimap<JInstance*,JInstance*>::iterator it;
+               std::multimap<JInstance*,JInstance*>::iterator it;
 
-              for (it=itlow; it!=itup; ++it) {
+              for (it=itlow; it!=itup; ++it) { 
                 v.push_back((*it).second);
-                //std::cout << "  -> " << (*it).second << " (" << (*it).second->get_name() << ") " << std::endl;
-                //get_id_by_inst((*it).second);
-              }
-              
-             //std::cout << " SIZE=" << v.size() << std::endl;
-            // v = get_real_vect(v1);
-             //for (int=0; i!=v.size(); ++i) {
+ 	        std::cout << "       " << (*it).second->get_name() << std::endl;
+	      
+		
+	      }
+	      
+	      //std::cout << "   " << i->get_namae() << " get_inst:" << std::endl;
                
-             //}
-             
-             
              return v;
         }
         
-        /*
-        void propogate() {
-	  for(unsigned int i=0; i<m_layers_cnt; i++ ) {
-	    for (unsigned int j=0; j<m_layers[i].size(); j++ ) {
-	      if (!i) m_layers[i][j]->set_value(100); else {
-		int v = 0;
-		std::multimap<JInstance*,JInstance*>::iterator c_im = m_connections.find(m_layers[i][j]);
-		if ( c_im != m_connections.end() ) {
-		  v = v + (*c_im).second->get_value();
-		  //v = v/k;
-		  m_layers[i][j]->set_value(v);
-		}
-	      }
-	    }
-	  }
-	}
-	*/
-        
-        
+       
         void JManager::do_and_draw() {
         
 	  
 	}
         
         void JManager::add_change() {
-	      //int count = rand()%m_layers_cnt;
-	      //for(unsigned int i=0; i<count; i++ ) permute_two_rand_instances_in_layer(rand()%m_layers_cnt);
-              
               while ( ! permute_two_rand_instances_in_layer(rand()%m_layers_cnt) );
 	}
         
+        //FIXME this part need to be rewrited
         bool JManager::permute_two_rand_instances_in_layer(int ln) {
 	      //assert(0);
 	      int f = rand()%m_layers[ln].size();
 	      int s = rand()%m_layers[ln].size();
 	      if ( f == s ) return false;
-	      
-	      //std::cout << "permuting m_layers["<< ln << "]["<< f << "] <=> m_layers["<< ln << "]["<< s << "]" << std::endl;
-	      //std::swap(m_layers[ln][f],m_layers[ln][s]);
-	      //m_layers[ln][f]
-	      // m_layers[ln][s] = m_layers[ln][f];
-              //m_layers[ln][s] = tmp;
 	      
 	      if ( !m_permuted.empty() ) m_permuted.erase(m_permuted.begin(),m_permuted.begin()+m_permuted.size());
                if ( !m_fixme_permuted.empty() ) m_fixme_permuted.erase(m_fixme_permuted.begin(),m_fixme_permuted.begin()+m_fixme_permuted.size());
@@ -215,7 +158,11 @@
               
               //FIXME mess and add delete
               m_renderer->draw_permute_two_instances(k.first,k.second);
-              std::swap(m_layers[ln][f],m_layers[ln][s]);
+              int tmp = m_layers[ln][f]->get_rownum();
+              m_layers[ln][f]->set_rownum(m_layers[ln][s]->get_rownum());
+	      m_layers[ln][s]->set_rownum(tmp);
+	      
+	      std::swap(m_layers[ln][f],m_layers[ln][s]);
 	      
 	      return true;
 	}
@@ -239,6 +186,12 @@
         }
 	
 
+
+	void create_column() {
+	  
+	  
+	}
+	
 	void JManager::init_data() {
 	    for (unsigned int i=0; i<m_layers_cnt; i++ ) {
 	      //int perclm = 1+rand()%m_max_per_clm;
@@ -246,7 +199,7 @@
               m_layers[i].resize(perclm);
 	      for (unsigned int j=0; j<perclm ; j++ ) {
 		SDL_Point p;
-		p.x = 50*i+10; p.y = 50*j+10;
+		p.x = 20*i+10; p.y = 20*j+10;
 		JInstance* ii = new JInstance;
 		ii->set_center(p);
 		std::stringstream z;
@@ -254,6 +207,7 @@
                 ii->set_name(z.str());
                 z.str("");
 		m_layers[i][j] = ii;
+		ii->set_rownum(j);
 		//std::cout << i << " " << j << std::endl;
 		 if (i) {
 		   //add_preds();
@@ -285,16 +239,19 @@
 	    }
 	//std::cout << "----------------" << std::endl;
         }
-         
+
+        
+        
+        // FIXME should be moved.
 	void JManager::draw() {
 	    SDL_SetRenderDrawColor( m_renderer->get(), 0xFF, 0xFF, 0xFF, 0xFF );
 	    SDL_RenderClear( m_renderer->get() );
 	    //* 
 	    for(unsigned i=0; i<m_layers_cnt; i++)
 	      for (unsigned int j=0; j<m_layers[i].size(); j++ ) {
-		m_renderer->draw_circle(m_layers[i][j]->get_center(),5,m_layers[i][j]->get_color());  
+		m_renderer->draw_circle(m_layers[i][j]->get_center(),3,m_layers[i][j]->get_color());  
 		//std::cout << "ayqezban" << std::endl;
-		//draw_text(m_layers[i][j]->get_name(),m_layers[i][j]->get_center());
+		//m_renderer->draw_text(m_layers[i][j]->get_name(),m_layers[i][j]->get_center());
 	      }
 	      
 	      std::multimap<JInstance*,JInstance*>::iterator i;

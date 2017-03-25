@@ -28,11 +28,23 @@ class JManager {
 		    bool operator()(int a) {
 			return (a > m_v);
 		    }
-		    
+	      private:
 		    int m_v;
 	   };
     
-	JManager(JRenderer* r):m_renderer(r),m_layers_cnt(13),m_max_per_clm(10),m_conn_density(1),m_last_res(0) {
+	 class ay_qez_ban2 {
+	      public:
+		  ay_qez_ban2(std::vector<int>* v ):m_v(v) {}
+	      public:
+		    int operator()(JInstance* i ) {
+		      std::cout << i -> get_rownum() << std::endl;;
+		      m_v->push_back(i->get_rownum());
+		    }
+	      private:
+		    std::vector<int>* m_v;
+	   };
+
+	   JManager(JRenderer* r):m_renderer(r),m_layers_cnt(3),m_max_per_clm(3),m_conn_density(1),m_last_res(0) {
 	  
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
@@ -50,13 +62,12 @@ class JManager {
         void action();
 	void revert();
         int change();
-	
-        std::pair<int,int> get_id_by_inst(JInstance* inst);
-        std::vector<int> get_real_vect(const std::vector<JInstance*>& iv);
-        void print_dbg();
-        int calc_intersections();
+
+	int calc_intersections();
         int calc_intersection(int i);
         int count_intersections(std::multiset<int>& seen, const std::vector<JInstance*>& v1);
+
+        std::multiset<int> get_real_vect(const std::vector<JInstance*>& iv,bool);
         std::vector<JInstance*> get_insts(JInstance* i);
         void do_and_draw();
         void add_change();
