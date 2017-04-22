@@ -111,7 +111,7 @@ void close()
 
 
   void draw_permute_two_instances(JInstance* f, JInstance* s) {
-               SDL_Point ns1 = s->get_center();
+             /*  SDL_Point ns1 = s->get_center();
                SDL_Point nf1 = f->get_center();
                SDL_Point tmp2 = s->get_center();
                
@@ -133,8 +133,8 @@ void close()
               }
               /**/
               
-              s->set_center(nf1);
-              f->set_center(ns1);
+              //s->set_center(nf1);
+              //f->set_center(ns1);
               //draw();
         }
 

@@ -44,8 +44,13 @@ class JManager {
 		    std::vector<int>* m_v;
 	   };
 
-	   JManager(JRenderer* r):m_renderer(r),m_layers_cnt(10),m_max_per_clm(10),m_conn_density(1),m_last_res(0) {
+	   JManager(JRenderer* r):m_renderer(r),m_layers_cnt(13),m_max_per_clm(10),m_conn_density(1),m_last_res(0) {
 	  
+          m_offsset1=50;
+          m_offsset2=10;
+          m_radius=5;
+          m_optimized = false;
+          
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
 	  init_data();
@@ -90,6 +95,13 @@ class JManager {
 	int m_start_res;
 	int m_last_res;
 
+        
+        int m_offsset1;
+        int m_offsset2;
+        int m_radius;
+        
+        bool m_optimized;
+        
 	JRenderer* m_renderer;
 };
 
