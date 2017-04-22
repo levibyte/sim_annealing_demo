@@ -24,20 +24,21 @@
 	    SDL_RenderPresent( m_renderer->get() );
 	    */
 	    
-	    /*
-	    JSimulateAnnealingImpl* impl = new JMySimulateAnnealingImpl(this);
-	    //JSimulateAnnealing j(impl*,T0,Tmin,time_step);
-	    JSimulateAnnealing j(impl,10000.0 , 0.5 , 0.1);
+	    //*
+	    JSimulateAnnealingImpl* impl = new JSimulateAnnealingMyImpl(this);
+                                        //T0,  Tmin, time_step
+	    JSimulateAnnealing j(impl,10000.0 , 0.1 , 0.01);
 	    j.simulate();
-	    calc_intersections();
-	    */
+            delete impl;
+            /**/
 	    
+            /*
 	    add_change();
+            */
+            
 	    calc_intersections();
 	    draw();
 	    std::cout << "BEGIN: " << m_start_res << " CURRENT: " << m_last_res << std::endl;
-	    //m_start_res = m_last_res;
-	    //<< " BEST: " << m_last_fitness << std::endl;
         }
 
 
@@ -55,10 +56,10 @@
         std::multiset<int> JManager::get_real_vect(const std::vector<JInstance*>& iv, bool dbg=false) {
           std::multiset<int> ov;
           for(int i=0;i<iv.size();i++) {
-	    if(dbg)  std::cout << "               name:" << iv[i]->get_name() << " pos:" << iv[i]->get_rownum() << std::endl;
+	    //if(dbg)  std::cout << "               name:" << iv[i]->get_name() << " pos:" << iv[i]->get_rownum() << std::endl;
 	    ov.insert(iv[i]->get_rownum());
 	  }
-	  if (dbg) std::cout << std::endl;
+	  //if (dbg) std::cout << std::endl;
           
           return ov;
         }
@@ -79,13 +80,13 @@
            
            std::multiset<int> real_v = get_real_vect(m_layers[i]);
 
-	    std::cout << "\n\n\n\n****intersections for " << i << "->" << i + 1 << "\n" ;
+	    //std::cout << "\n\n\n\n****intersections for " << i << "->" << i + 1 << "\n" ;
 
            for (unsigned int j=0; j<real_v.size(); j++ ) {
-             std::cout << "  ." << i << " "  << j <<" looking by the name of" << m_layers[i][j]->get_name() << std::endl;
+            // std::cout << "  ." << i << " "  << j <<" looking by the name of" << m_layers[i][j]->get_name() << std::endl;
 	     count = count + count_intersections(seen,get_insts(m_layers[i][j]));
 	   }
-	    std::cout << "intersections for " << i << "->" << i + 1 << " ***"<< count  << "*** \n \n" ;
+	    //std::cout << "intersections for " << i << "->" << i + 1 << " ***"<< count  << "*** \n \n" ;
 	    return count;
         }
         
@@ -107,14 +108,14 @@
         //FIXME!
         std::vector<JInstance*> JManager::get_insts(JInstance* i) {
               std::vector<JInstance*> v;//, v2;
-               std::cout << "      " << i->get_name() << " get_inst:" << std::endl;
+               //std::cout << "      " << i->get_name() << " get_inst:" << std::endl;
                std::multimap<JInstance*,JInstance*>::iterator itlow = m_connections.lower_bound(i);  
                std::multimap<JInstance*,JInstance*>::iterator itup = m_connections.upper_bound(i);   
                std::multimap<JInstance*,JInstance*>::iterator it;
 
               for (it=itlow; it!=itup; ++it) { 
                 v.push_back((*it).second);
- 	        std::cout << "       " << (*it).second->get_name() << std::endl;
+ 	        //std::cout << "       " << (*it).second->get_name() << std::endl;
 	      
 		
 	      }
@@ -177,7 +178,13 @@
 	    for (i=m_permuted.begin();i!=m_permuted.end();i++) 
 	    { 
 	      m_renderer->draw_permute_two_instances((*i).second,(*i).first);
-	      std::swap(m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.second],m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.first]);
+	      
+              int tmp = m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.second]->get_rownum();
+              m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.second]->set_rownum(m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.first]->get_rownum());
+              m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.first]->set_rownum(tmp);
+              
+              
+              std::swap(m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.second],m_layers[m_fixme_permuted[q].second][m_fixme_permuted[q].first.first]);
 	      q++;
 	    }
 	    

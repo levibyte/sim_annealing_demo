@@ -44,7 +44,7 @@ class JManager {
 		    std::vector<int>* m_v;
 	   };
 
-	   JManager(JRenderer* r):m_renderer(r),m_layers_cnt(3),m_max_per_clm(3),m_conn_density(1),m_last_res(0) {
+	   JManager(JRenderer* r):m_renderer(r),m_layers_cnt(10),m_max_per_clm(10),m_conn_density(1),m_last_res(0) {
 	  
 	  m_layers.resize(m_layers_cnt);
 	  srand(time(0));
@@ -94,13 +94,13 @@ class JManager {
 };
 
 
-class JMySimulateAnnealingImpl : public JSimulateAnnealingImpl
+class JSimulateAnnealingMyImpl : public JSimulateAnnealingImpl
 {
     public:
-	  JMySimulateAnnealingImpl(JManager* j):m_logic(j) { assert(m_logic); }
+	  JSimulateAnnealingMyImpl(JManager* j):m_logic(j) { assert(m_logic); }
 	  virtual void revert_change() { m_logic->revert(); }
 	  virtual int  make_change() { return m_logic->change(); }
-	  virtual void post_process() { m_logic->draw(); }
+	  virtual void post_process_time_step() { m_logic->draw(); }
 
     private:  
 	  JManager* m_logic;
