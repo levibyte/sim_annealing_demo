@@ -1,7 +1,17 @@
+
 simulated annealing ( and simple placement demo)
-===
+
 This is just-for-fun project which will try to provide "generic" code for simulated annealing.
 Actual SA is in algo.h file, so you just need this single header if you like to use SA in your task.
+
+===
+Starting with random placement ( each module can have only connections to modules in next adjcent column)
+---
+<img src="https://image.ibb.co/n428La/bsmall.png">
+
+The optimized placement after applying SA.
+---
+<img src="https://image.ibb.co/cHreRF/asmall.png">
 
 Inorder to use, you need to have your own implementation dervied from default implementation.
 Morelikely you will pass pointer to your logic to bind your logic with SA interfaces. 
@@ -33,11 +43,5 @@ Then you can use JSimulateAnnealing class wich will perform actual SA.
 More visual example goes within package (SDL needed).
 Target is to reduce number of intercrossings by performing more optimal placement.
 
-Starting with random placement ( each module can have only connections to modules in next adjcent column)
----
-<img src="https://image.ibb.co/n428La/bsmall.png">
 
-The optimized placement after applying SA.
----
-<img src="https://image.ibb.co/cHreRF/asmall.png">
 
