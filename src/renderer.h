@@ -1,6 +1,7 @@
 #ifndef renderer_h
 #define renderer_h
 
+#include <stdio.h>
 #include "instance.h"
 
 
@@ -51,7 +52,7 @@ bool init(const std::string& title)
 	  exit(1);
       }
       
-      gTTF_font = TTF_OpenFont("FreeSans.ttf", 10); 
+      gTTF_font = TTF_OpenFont("./FreeSans.ttf", 10); 
       if(!gTTF_font) {  
         printf("TTF_OpenFont: %s\n", TTF_GetError());
         //exit(1);
@@ -165,8 +166,8 @@ void close()
 	      SDL_Rect Message_rect; 
 	      Message_rect.x = p.x;  
 	      Message_rect.y = p.y; 
-	      Message_rect.w = 20; 
-	      Message_rect.h = 20; 
+	      Message_rect.w = 30; 
+	      Message_rect.h = 30; 
 
 	      SDL_RenderCopy(gRenderer, Message, NULL, &Message_rect); 
 		#endif

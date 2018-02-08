@@ -44,7 +44,8 @@ int main( int argc, char* args[] )
 		    } 
 	
 		    j->do_and_draw();
-		    lastTime = currentTime;  
+		    
+                    lastTime = currentTime;  
 		}
         }
 

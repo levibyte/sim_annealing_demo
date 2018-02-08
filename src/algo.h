@@ -18,7 +18,7 @@ class JSimulateAnnealingImpl {
 	}
 	
       virtual float decrease_temperature(float T0, float T, float time) {
-	    float alpha = 0.9;
+	    float alpha = 0.99;
 	    //float delta_t;
 	    return T0*pow(alpha,time);
 	  }

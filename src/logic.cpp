@@ -15,39 +15,95 @@
 #include <sstream>
 #include <functional>
 
-	    
+          typedef  std::vector< std::vector<JInstance*> >  ELEN;
+  
+        /*void JManager::test(ELEN& e) {
+            std::vector<ELEN>* v = new std::vector<ELEN>;
+            for(int i=0; i
+            
+          
+        }*/
+
+        typedef  std::vector< std::vector<JInstance*> >  ELEN;
+
+        /*
+        void JManager::action() {
+            std::vector<ELEN>* v = new std::vector<ELEN>;
+            
+            //std::vector< std::vector< std::vector<JInstance*> > > v = new std::vector< std::vector< std::vector<JInstance*> > >(1);
+            for(int i=0;i<10;i++) {
+                add_change();
+                v->push_back(m_layers);
+            }
+           
+            m_layers = v->operator[](v->size()-2);
+            draw();
+            std::cout << calc_intersections() << std::endl;
+            
+           /*
+            std::cout << m_layers[0][0]->get_name() << std::endl;
+            std::cout << m_layers[0][1]->get_name() << std::endl;
+            std::cout << m_layers[0][2]->get_name() << std::endl;
+            std::cout << m_layers[0][3]->get_name() << std::endl;
+            std::cout << m_layers[1][0]->get_name() << std::endl;
+            std::cout << m_layers[1][1]->get_name() << std::endl;
+            std::cout << m_layers[1][2]->get_name() << std::endl;
+            std::cout << m_layers[1][3]->get_name() << std::endl;
+            
+            
+            std::cout << "hopar" << v->size() << std::endl;
+            m_layers = *(v->begin());
+            add_change();
+            add_change();
+            add_change();
+            draw();
+
+            std::cout << "_-----------------------ELEN JAN --------------------" << std::endl;
+            //draw();
+            std::cout << m_layers[0][0]->get_name() << std::endl;
+            std::cout << m_layers[0][1]->get_name() << std::endl;
+            std::cout << m_layers[0][2]->get_name() << std::endl;
+            std::cout << m_layers[0][3]->get_name() << std::endl;
+            std::cout << m_layers[1][0]->get_name() << std::endl;
+            std::cout << m_layers[1][1]->get_name() << std::endl;
+            std::cout << m_layers[1][2]->get_name() << std::endl;
+            std::cout << m_layers[1][3]->get_name() << std::endl;
+            
+            std::cout << calc_intersections() << std::endl;
+            */
+        //}
+        /**/
+  	
+            
         void JManager::action() {
 	    
-	    /*SDL_RenderClear( m_renderer->get() );
-	    SDL_SetRenderDrawColor( m_renderer->get(), 0, 0, 0, 255);
-	    //SDL_RenderClear( m_renderer->get() );
-	    SDL_RenderPresent( m_renderer->get() );
-	    */
-	    
+             SDL_RenderClear( m_renderer->get() );
+              SDL_SetRenderDrawColor( m_renderer->get(), 0xFF, 0xFF, 0xFF, 0xFF );
+             SDL_RenderPresent( m_renderer->get() );
+
+                
             if (m_optimized) {
               std::cout << " already optimzed. Press Esc to generate new placement" << std::endl;
               return;
             }
             
             std::cout << " Annealing in process, please wait..." << std::endl;
-	    //*
 	    JSimulateAnnealingImpl* impl = new JSimulateAnnealingMyImpl(this);
                                         //T0,  Tmin, time_step
-	    JSimulateAnnealing j(impl,10000.0 , 0.2 , 0.01);
+	    JSimulateAnnealing j(impl,10000.0 , 0.1 , 0.01);
 	    j.simulate();
             delete impl;
-            /**/
-	    
-            /*
-	    add_change();
-            */
+
+            
+	    //add_change();
+            
 	    calc_intersections();
 	    draw();
 	    std::cout << "BEGIN: " << m_start_res << " CURRENT: " << m_last_res << std::endl;
             
             m_optimized = true;
         }
-
+  /**/
 
 	void JManager::revert() {
 	      undo_permute();
@@ -134,7 +190,7 @@
         
        
         void JManager::do_and_draw() {
-        
+            draw();
 	  
 	}
         
@@ -271,18 +327,41 @@
                 p.x=m_offsset1*i+m_offsset2;
                 p.y=m_offsset1*m_layers[i][j]->get_rownum()+m_offsset2;
                 //m_renderer->draw_circle(m_layers[i][j]->get_center(),5,m_layers[i][j]->get_color());  
-                
+               
                 m_renderer->draw_circle(p,m_radius,m_layers[i][j]->get_color());  
                 //std::cout << "ayqezban" << m_layers[i][j]->get_rownum() << " AAA " << m_layers[i][j]->get_name() << std::endl;
-                //m_renderer->draw_text(m_layers[i][j]->get_name(),p);
+                
+                /*
+                std::stringstream z;
+                z << m_layers[i][j]->get_name();// << " [" << i << " " << j << "]";
+                z << "   " << i << "-" << m_layers[i][j]->get_rownum() ;
+                
+                //std::string text(m_layers[i][j]->get_name()+"["+)
+                m_renderer->draw_text(z.str(),p);
+                z.str("");
+                */
+                
+                std::vector<JInstance*> vec = get_insts(m_layers[i][j]);
+                 std::vector<JInstance*>::iterator it;
+                //*
+                for (it=vec.begin(); it!=vec.end(); ++it) { 
+                  SDL_RenderDrawLine(m_renderer->get(),m_offsset1*j+m_offsset2,m_offsset1*i+m_offsset2,m_offsset1*(*it)->get_rownum()+m_offsset2,m_offsset1*(*it)->get_colnum()+m_offsset2);
+                }
+                /**/
               }
               
+                /*
               std::multimap<JInstance*,JInstance*>::iterator i;
               for(i=m_connections.begin();i!=m_connections.end();++i)
                 SDL_RenderDrawLine(m_renderer->get(),m_offsset1*(*i).first->get_colnum()+m_offsset2,m_offsset1*(*i).first->get_rownum()+m_offsset2,
                                               m_offsset1*(*i).second->get_colnum()+m_offsset2,m_offsset1*(*i).second->get_rownum()+m_offsset2);
-              /**/
-              SDL_RenderPresent( m_renderer->get() );
+              
+              }*/
+             //SDL_SetRenderDrawColor( m_renderer->get(), 0xFF, 0xFF, 0xFF, 0xFF );
+            //SDL_RenderClear( m_renderer->get() );
+
+                SDL_RenderPresent( m_renderer->get() );
+              
         }
 
 
