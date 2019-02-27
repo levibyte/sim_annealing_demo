@@ -1,5 +1,5 @@
 
-simulated annealing ( and simple placement demo)
+#simulated annealing ( and simple placement demo)
 
 This is just-for-fun project which will try to provide "generic" code for simulated annealing.
 Actual SA is in algo.h file, so you just need this single header if you like to use SA in your task.
